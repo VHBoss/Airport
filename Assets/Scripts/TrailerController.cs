@@ -4,9 +4,10 @@ using UnityEngine;
 
 public class TrailerController : MonoBehaviour
 {    
-    [SerializeField] private float m_TrailerDistance = 2.7f;
+    [SerializeField] private Transform m_Target;
+    [SerializeField] private float m_TrailerDistance = 1.6f;
     [SerializeField] private int m_MaxTrailersCount = 2;
-    [SerializeField] private int m_StartTrailerCount = 1;
+    [SerializeField] private int m_DebugStartTrailerCount = 1;
     [SerializeField] private Trailer m_TrailerPrefab;
 
     private List<Trailer> m_Trailers = new List<Trailer>();
@@ -16,21 +17,27 @@ public class TrailerController : MonoBehaviour
     private List<Quaternion> m_Rotations = new List<Quaternion>();
     private Vector3 m_PrevPos;
     private float m_TotalLength = 0;
-    private float m_MaxLength = 3;
+    private float m_MaxLength = 10;
+    private float m_Distance = 0;
 
     private void Start()
     {
+        if(m_Target == null)
+        {
+            m_Target = transform;
+        }
+
         m_Distances.Add(0);
-        m_Positions.Add(transform.position);
-        m_Rotations.Add(transform.rotation);
+        m_Positions.Add(m_Target.position);
+        m_Rotations.Add(m_Target.rotation);
 
         m_TotalLength = 0;
-        m_PrevPos = transform.position;
-        m_MaxLength = m_TrailerDistance * m_Trailers.Count + 1;
+        m_PrevPos = m_Target.position;
+        m_MaxLength = m_TrailerDistance * (m_Trailers.Count + 1);
 
-        for (int i = 0; i < m_StartTrailerCount; i++)
+        for (int i = 0; i < m_DebugStartTrailerCount; i++)
         {
-            AddTrail();
+            AddTrailDebug();
         }
     }
 
@@ -42,15 +49,16 @@ public class TrailerController : MonoBehaviour
 
     void UpdatePath()
     {
-        float distance = Vector3.Distance(m_PrevPos, transform.position);
-        if (distance > 0)
+        m_Distance = Vector3.Distance(m_PrevPos, m_Target.position);
+        if (m_Distance > 1)
         {
-            m_PrevPos = transform.position;
-            m_TotalLength += distance;
+            m_PrevPos = m_Target.position;
+            m_TotalLength += m_Distance;
 
-            m_Positions.Insert(0, transform.position);
-            m_Rotations.Insert(0, transform.rotation);
-            m_Distances.Insert(0, distance);
+            m_Positions.Insert(0, m_Target.position);
+            m_Rotations.Insert(0, m_Target.rotation);
+            m_Distances.Insert(0, m_Distance);
+            m_Distance = 0;
 
             if (m_TotalLength > m_MaxLength)
             {
@@ -60,7 +68,7 @@ public class TrailerController : MonoBehaviour
                 m_Distances.RemoveAt(index);
                 m_Positions.RemoveAt(index);
             }
-        }
+        }        
     }
 
     void UpdateTrailers()
@@ -68,17 +76,17 @@ public class TrailerController : MonoBehaviour
         for (int j = 0; j < m_Trailers.Count; j++)
         {
             float distance = m_TrailerDistance * (j + 1);
-            float totalDistance = 0;
-            for (int i = 0; i < m_Distances.Count - 1; i++)
+            float totalDistance = m_Distance;
+
+            for (int i = 0; i < m_Positions.Count - 1; i++)
             {
                 totalDistance += m_Distances[i];
-                if (totalDistance >= distance)
+                if (totalDistance > distance)
                 {
                     float val = (totalDistance - distance) / m_Distances[i];
                     m_TrailersTransform[j].position = Vector3.Lerp(m_Positions[i + 1], m_Positions[i], val);
                     m_TrailersTransform[j].rotation = Quaternion.Slerp(m_Rotations[i + 1], m_Rotations[i], val);
                     //m_TrailersTransform[j].rotation = Quaternion.LookRotation(m_Positions[i] - m_Positions[i + 1]);
-
                     break;
                 }
             }
@@ -145,19 +153,28 @@ public class TrailerController : MonoBehaviour
 
     public void AddTrail()
     {
-        Trailer trailer = null;
-        if (m_Trailers.Count > 0)
-        {
-            int lastIndex = m_Trailers.Count - 1;
-            trailer = Instantiate(m_TrailerPrefab, m_Trailers[lastIndex].transform.position, m_TrailersTransform[lastIndex].transform.rotation);
-        }
-        else
-        {
-            trailer = Instantiate(m_TrailerPrefab, transform.position, transform.rotation);
-        }
+        Trailer trailer = Instantiate(m_TrailerPrefab);
+        SetPosition(trailer.transform);
         m_Trailers.Add(trailer);
         m_TrailersTransform.Add(trailer.transform);
         m_MaxLength = m_TrailerDistance * m_Trailers.Count + 1;
+    }
+
+    private void SetPosition(Transform trailer)
+    {
+        float distance = m_TrailerDistance * (m_Trailers.Count + 1);
+        float totalDistance = 0;
+        for (int i = 0; i < m_Distances.Count - 1; i++)
+        {
+            totalDistance += m_Distances[i];
+            if (totalDistance >= distance)
+            {
+                float val = (totalDistance - distance) / m_Distances[i];
+                trailer.position = Vector3.Lerp(m_Positions[i + 1], m_Positions[i], val);
+                trailer.rotation = Quaternion.Slerp(m_Rotations[i + 1], m_Rotations[i], val);
+                break;
+            }
+        }
     }
 
     public void RemoveTrail()
@@ -170,6 +187,23 @@ public class TrailerController : MonoBehaviour
             Destroy(trailer.gameObject);
             m_MaxLength = m_TrailerDistance * m_Trailers.Count + 1;
         }
+    }
+
+    public void AddTrailDebug()
+    {
+        Trailer trailer = null;
+        if (m_Trailers.Count > 0)
+        {
+            int lastIndex = m_Trailers.Count - 1;
+            trailer = Instantiate(m_TrailerPrefab, m_Trailers[lastIndex].transform.position, m_TrailersTransform[lastIndex].transform.rotation);
+        }
+        else
+        {
+            trailer = Instantiate(m_TrailerPrefab, m_Target.position - m_Target.forward * m_TrailerDistance, m_Target.rotation);
+        }
+        m_Trailers.Add(trailer);
+        m_TrailersTransform.Add(trailer.transform);
+        m_MaxLength = m_TrailerDistance * m_Trailers.Count + 1;
     }
 
 #if UNITY_EDITOR

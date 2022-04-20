@@ -4,14 +4,14 @@ using UnityEngine;
 
 public class Sample : MonoBehaviour
 {
-    public int count;
-
     void Start()
     {
-        print(1 % 4);
-        print(2 % 4);
-        print(3 % 4);
-        print(4 % 4);
-        print(5 % 4);
+        uint a = 0b_0001;
+        print(a);
+        a |= 0b_1000;
+        print(a);
+        a |= 0b_0010;
+        print(a);
+        print(a);
     }
 }
