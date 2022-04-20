@@ -5,14 +5,12 @@ public class PlayerControls : MonoBehaviour
     public float playerSpeed = 5.0f;
     public float rotationTime = 0.1f;
     public Transform Car;
-    public Transform CarBody;
     public Transform WheelFL;
     public Transform WheelFR;
     public CarRaycaster Raycaster;
     public FloatingJoystick variableJoystick;
 
     private readonly float maxWheelAngle = 40;
-    private readonly float maxBodyAngleZ = 15;
 
     private CharacterController controller;
     private Vector3 playerVelocity;
@@ -20,9 +18,21 @@ public class PlayerControls : MonoBehaviour
     private bool groundedPlayer;
     private Vector3 rotationVelocity = Vector3.zero;
 
-    private void Start()
+    private void Awake()
     {
         controller = gameObject.GetComponent<CharacterController>();
+        GameConfig.SettingsChanged += OnSettingsChanged;
+    }
+
+    private void OnDestroy()
+    {
+        GameConfig.SettingsChanged -= OnSettingsChanged;
+    }
+
+    private void OnSettingsChanged(GameConfig config)
+    {
+        playerSpeed = config.CarMoveSpeed;
+        rotationTime = config.CarRotationTime;
     }
 
     void Update()
@@ -59,24 +69,10 @@ public class PlayerControls : MonoBehaviour
         }
         else
         {
-            //m_Rigidbody.velocity = Vector3.zero;
             WheelFL.localRotation = WheelFR.localRotation = Quaternion.identity;
         }
 
         playerVelocity.y -= 10 * Time.deltaTime;
         controller.Move(playerVelocity * Time.deltaTime);
-
-        UpdateBody();
-    }
-
-    private void UpdateBody()
-    {
-        //if (move != Vector3.zero)
-        //{
-            float ang = Vector3.SignedAngle(Car.transform.forward, move, Vector3.up);
-            ang = ang < -maxBodyAngleZ ? -maxBodyAngleZ : ang;
-            ang = ang > maxBodyAngleZ ? maxBodyAngleZ : ang;
-            CarBody.localEulerAngles = new Vector3(0, 0, ang);
-        //}
     }
 }

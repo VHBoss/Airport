@@ -20,6 +20,23 @@ public class TrailerController : MonoBehaviour
     private float m_MaxLength = 0;
     private float m_Distance = 0;
 
+    private void Awake()
+    {
+        GameConfig.SettingsChanged += OnSettingsChanged;
+    }
+
+    private void OnDestroy()
+    {
+        GameConfig.SettingsChanged -= OnSettingsChanged;
+    }
+
+    private void OnSettingsChanged(GameConfig config)
+    {
+        m_TrailerDistance = config.TrailerDistance;
+        m_MaxTrailersCount = config.MaxTrailers;
+        m_DebugStartTrailerCount = config.StartTrailers;
+    }
+
     private void Start()
     {
         if(m_Target == null)
@@ -207,10 +224,10 @@ public class TrailerController : MonoBehaviour
     }
 
 #if UNITY_EDITOR
-    private void OnGUI()
-    {
-        GUI.Label(new Rect(10, 10, 50, 20), m_Positions.Count.ToString());
-    }
+    //private void OnGUI()
+    //{
+    //    GUI.Label(new Rect(10, 10, 50, 20), m_Positions.Count.ToString());
+    //}
 
     private void OnDrawGizmos()
     {
