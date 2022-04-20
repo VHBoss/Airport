@@ -8,16 +8,16 @@ public class TrailerController : MonoBehaviour
     [SerializeField] private float m_TrailerDistance = 1.6f;
     [SerializeField] private int m_MaxTrailersCount = 2;
     [SerializeField] private int m_DebugStartTrailerCount = 1;
-    [SerializeField] private Trailer m_TrailerPrefab;
+    [SerializeField] private TrailerStack m_TrailerPrefab;
 
-    private List<Trailer> m_Trailers = new List<Trailer>();
+    private List<TrailerStack> m_Trailers = new List<TrailerStack>();
     private List<Transform> m_TrailersTransform = new List<Transform>();
     private List<float> m_Distances = new List<float>();
     private List<Vector3> m_Positions = new List<Vector3>();
     private List<Quaternion> m_Rotations = new List<Quaternion>();
     private Vector3 m_PrevPos;
     private float m_TotalLength = 0;
-    private float m_MaxLength = 10;
+    private float m_MaxLength = 0;
     private float m_Distance = 0;
 
     private void Start()
@@ -33,7 +33,7 @@ public class TrailerController : MonoBehaviour
 
         m_TotalLength = 0;
         m_PrevPos = m_Target.position;
-        m_MaxLength = m_TrailerDistance * (m_Trailers.Count + 1);
+        m_MaxLength = m_TrailerDistance * (m_Trailers.Count + 2);
 
         for (int i = 0; i < m_DebugStartTrailerCount; i++)
         {
@@ -153,17 +153,17 @@ public class TrailerController : MonoBehaviour
 
     public void AddTrail()
     {
-        Trailer trailer = Instantiate(m_TrailerPrefab);
+        TrailerStack trailer = Instantiate(m_TrailerPrefab);
         SetPosition(trailer.transform);
         m_Trailers.Add(trailer);
         m_TrailersTransform.Add(trailer.transform);
-        m_MaxLength = m_TrailerDistance * m_Trailers.Count + 1;
+        m_MaxLength = m_TrailerDistance * (m_Trailers.Count + 2);
     }
 
     private void SetPosition(Transform trailer)
     {
         float distance = m_TrailerDistance * (m_Trailers.Count + 1);
-        float totalDistance = 0;
+        float totalDistance = m_Distance;
         for (int i = 0; i < m_Distances.Count - 1; i++)
         {
             totalDistance += m_Distances[i];
@@ -181,17 +181,17 @@ public class TrailerController : MonoBehaviour
     {
         if (m_Trailers.Count > 0)
         {
-            Trailer trailer = m_Trailers[m_Trailers.Count - 1];
+            TrailerStack trailer = m_Trailers[m_Trailers.Count - 1];
             m_Trailers.RemoveAt(m_Trailers.Count - 1);
             m_TrailersTransform.RemoveAt(m_TrailersTransform.Count - 1);
             Destroy(trailer.gameObject);
-            m_MaxLength = m_TrailerDistance * m_Trailers.Count + 1;
+            m_MaxLength = m_TrailerDistance * (m_Trailers.Count + 2);
         }
     }
 
     public void AddTrailDebug()
     {
-        Trailer trailer = null;
+        TrailerStack trailer = null;
         if (m_Trailers.Count > 0)
         {
             int lastIndex = m_Trailers.Count - 1;
@@ -203,7 +203,7 @@ public class TrailerController : MonoBehaviour
         }
         m_Trailers.Add(trailer);
         m_TrailersTransform.Add(trailer.transform);
-        m_MaxLength = m_TrailerDistance * m_Trailers.Count + 1;
+        m_MaxLength = m_TrailerDistance * (m_Trailers.Count + 2);
     }
 
 #if UNITY_EDITOR
