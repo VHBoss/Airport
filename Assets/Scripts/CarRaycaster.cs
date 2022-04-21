@@ -14,30 +14,46 @@ public class CarRaycaster : MonoBehaviour
     [SerializeField] private Transform m_RaycastR2;
 
     private Vector3 m_OverrideMove;
+    private float m_RayLenght = 2;
+
+    private void Awake()
+    {
+        GameConfig.SettingsChanged += OnSettingsChanged;
+    }
+
+    private void OnDestroy()
+    {
+        GameConfig.SettingsChanged -= OnSettingsChanged;
+    }
+
+    private void OnSettingsChanged(GameConfig config)
+    {
+        m_RayLenght = config.CarRaycastRayLength;
+    }
 
     public void DetectCollisions(ref Vector3 move)
     {
         bool Up = false, Down = false, Left = false, Right = false;
 
-        if (Physics.Raycast(m_RaycastU1.position, m_RaycastU1.forward, out RaycastHit hitF, 2, 1 << 4) ||
-            Physics.Raycast(m_RaycastU2.position, m_RaycastU2.forward, out hitF, 2, 1 << 4))
+        if (Physics.Raycast(m_RaycastU1.position, m_RaycastU1.forward, out RaycastHit hitF, m_RayLenght, 1 << 4) ||
+            Physics.Raycast(m_RaycastU2.position, m_RaycastU2.forward, out hitF, m_RayLenght, 1 << 4))
         {
             Up = true;
         }
-        if (Physics.Raycast(m_RaycastD1.position, m_RaycastD1.forward, out RaycastHit hitD, 2, 1 << 4) ||
-            Physics.Raycast(m_RaycastD2.position, m_RaycastD2.forward, out hitD, 2, 1 << 4))
+        if (Physics.Raycast(m_RaycastD1.position, m_RaycastD1.forward, out RaycastHit hitD, m_RayLenght, 1 << 4) ||
+            Physics.Raycast(m_RaycastD2.position, m_RaycastD2.forward, out hitD, m_RayLenght, 1 << 4))
         {
             Down = true;
         }
 
-        if (Physics.Raycast(m_RaycastL1.position, m_RaycastL1.forward, out RaycastHit hitL, 2, 1 << 4) ||
-            Physics.Raycast(m_RaycastL2.position, m_RaycastL2.forward, out hitL, 2, 1 << 4))
+        if (Physics.Raycast(m_RaycastL1.position, m_RaycastL1.forward, out RaycastHit hitL, m_RayLenght, 1 << 4) ||
+            Physics.Raycast(m_RaycastL2.position, m_RaycastL2.forward, out hitL, m_RayLenght, 1 << 4))
         {
             Left = true;
         }
 
-        if (Physics.Raycast(m_RaycastR1.position, m_RaycastR1.forward, out RaycastHit hitR, 2, 1 << 4) ||
-            Physics.Raycast(m_RaycastR2.position, m_RaycastR2.forward, out hitR, 2, 1 << 4))
+        if (Physics.Raycast(m_RaycastR1.position, m_RaycastR1.forward, out RaycastHit hitR, m_RayLenght, 1 << 4) ||
+            Physics.Raycast(m_RaycastR2.position, m_RaycastR2.forward, out hitR, m_RayLenght, 1 << 4))
         {
             Right = true;
         }

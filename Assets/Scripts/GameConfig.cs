@@ -14,6 +14,7 @@ public class GameConfig : ScriptableObject
     [Header("Car settings")]
     public float CarMoveSpeed = 7;
     public float CarRotationTime = 0.15f;
+    public float CarRaycastRayLength = 2f;
 
     [Header("Trailers settings")]
     public float TrailerDistance = 1.6f;
