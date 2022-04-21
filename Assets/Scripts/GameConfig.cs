@@ -14,12 +14,14 @@ public class GameConfig : ScriptableObject
     [Header("Car settings")]
     public float CarMoveSpeed = 7;
     public float CarRotationTime = 0.15f;
-    public float CarRaycastRayLength = 2f;
+    public float CarRaycastLength = 1f;
 
     [Header("Trailers settings")]
     public float TrailerDistance = 1.6f;
     public int MaxTrailers = 2;
     public int StartTrailers = 2;
+    public float TrailAppearSpeed = 0.5f;
+    public float TrailDisappearSpeed = 0.3f;
     public int MaxSuitcaseInTrail = 8;
     public float SuitcaseAnimationTime = 0.3f;
 
@@ -34,8 +36,8 @@ public class GameConfig : ScriptableObject
     public float CaseJumpTime = 0.5f;
 
     [Header("Airplane trap")]
-    public float TrapUploadTime = 0.5f;
-    //public float TrapMoveTime = 1f;
+    public float TrapUploadTime = 0.1f;
+    public float TrapMoveTime = 0.5f;
 
     public void UpdateSettings()
     {

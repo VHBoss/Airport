@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Collections;
 using UnityEngine;
+using DG.Tweening;
 
 public class TrailerController : MonoBehaviour
 {    
@@ -172,6 +173,8 @@ public class TrailerController : MonoBehaviour
     {
         TrailerStack trailer = Instantiate(m_TrailerPrefab);
         SetPosition(trailer.transform);
+        trailer.Init();
+
         m_Trailers.Add(trailer);
         m_TrailersTransform.Add(trailer.transform);
         m_MaxLength = m_TrailerDistance * (m_Trailers.Count + 2);
@@ -199,9 +202,9 @@ public class TrailerController : MonoBehaviour
         if (m_Trailers.Count > 0)
         {
             TrailerStack trailer = m_Trailers[m_Trailers.Count - 1];
+            trailer.Remove();
             m_Trailers.RemoveAt(m_Trailers.Count - 1);
             m_TrailersTransform.RemoveAt(m_TrailersTransform.Count - 1);
-            Destroy(trailer.gameObject);
             m_MaxLength = m_TrailerDistance * (m_Trailers.Count + 2);
         }
     }

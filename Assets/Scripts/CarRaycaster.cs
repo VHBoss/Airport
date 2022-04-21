@@ -28,7 +28,7 @@ public class CarRaycaster : MonoBehaviour
 
     private void OnSettingsChanged(GameConfig config)
     {
-        m_RayLenght = config.CarRaycastRayLength;
+        m_RayLenght = config.CarRaycastLength;
     }
 
     public void DetectCollisions(ref Vector3 move)

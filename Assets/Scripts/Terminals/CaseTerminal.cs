@@ -42,7 +42,7 @@ public class CaseTerminal : MonoBehaviour
         }
 
         Case suitcase = Instantiate(m_CasePrefab, transform.position, Quaternion.identity);
-        suitcase.Init(slot, m_EndPoint.position);
+        suitcase.Load(slot, m_EndPoint.position);
 
         slot.gameObject.SetActive(false);
     }

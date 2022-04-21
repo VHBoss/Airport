@@ -4,7 +4,10 @@ using UnityEngine;
 
 public class AirTrap : MonoBehaviour
 {
-    [SerializeField] private float m_LoadTime = 0.05f;
+    [SerializeField] private float m_LoadTime = 0.1f;
+    [SerializeField] private float m_TrapSpeed = 0.5f;
+    [SerializeField] private Transform m_StartPoint;
+    [SerializeField] private Transform m_EndPoint;
 
     private TrailerController m_TtrailerController;
 
@@ -21,6 +24,7 @@ public class AirTrap : MonoBehaviour
     private void OnSettingsChanged(GameConfig config)
     {
         m_LoadTime = config.TrapUploadTime;
+        m_TrapSpeed = config.TrapMoveTime;
     }
 
     private void OnTriggerEnter(Collider other)
@@ -43,7 +47,7 @@ public class AirTrap : MonoBehaviour
 
         if (item != null)
         {
-            Destroy(item.gameObject);
+            item.Unload(m_StartPoint, m_EndPoint, m_TrapSpeed);
         }
         else
         {

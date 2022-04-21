@@ -26,7 +26,7 @@ public class Case : MonoBehaviour
         m_JumpTime = config.CaseJumpTime;
     }
 
-    public void Init(Transform slot, Vector3 endPoint)
+    public void Load(Transform slot, Vector3 endPoint)
     {
         m_Collider = GetComponent<Collider>();
         m_Animation = GetComponent<Animation>();
@@ -44,6 +44,15 @@ public class Case : MonoBehaviour
             m_Collider.enabled = true;
             m_Animation.Play();
         });
+    }
+
+    public void Unload(Transform startPoint, Transform endPoint, float trapSpeed)
+    {
+        DOTween.Sequence()
+            .Append(transform.DOMove(startPoint.position, m_JumpTime))
+            .Join(transform.DORotate(startPoint.eulerAngles, m_JumpTime))
+            .Append(transform.DOMove(endPoint.position, trapSpeed).SetEase(Ease.Linear))
+            .OnComplete(()=> Destroy(gameObject));
     }
 
     private void OnTriggerEnter(Collider other)

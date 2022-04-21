@@ -4,8 +4,12 @@ using UnityEngine;
 public class TrailerStack : MonoBehaviour
 {
     [SerializeField] private Transform m_ItemRoot;
+    [SerializeField] private Transform m_Body;
+    [SerializeField] private Transform m_Wheels;
     [SerializeField] private float m_Offset = 0.285f;
     [SerializeField] private int m_MaxCount = 8;
+    [SerializeField] private float m_TrailAppearSpeed = 0.5f;
+    [SerializeField] private float m_TrailDisappearSpeed = 0.3f;
 
     public int ItemCount => m_ItemRoot.childCount;
 
@@ -26,6 +30,22 @@ public class TrailerStack : MonoBehaviour
     {
         m_MaxCount = config.MaxSuitcaseInTrail;
         m_AnimationTime = config.SuitcaseAnimationTime;
+        m_TrailAppearSpeed = config.TrailAppearSpeed;
+        m_TrailDisappearSpeed = config.TrailDisappearSpeed;
+    }
+
+    public void Init()
+    {
+        m_Body.localScale = Vector3.zero;
+        m_Wheels.localScale = Vector3.zero;
+        m_Body.DOScale(1, m_TrailAppearSpeed).SetEase(Ease.OutBack);
+        m_Wheels.DOScale(1, m_TrailAppearSpeed).SetEase(Ease.OutBack);
+    }
+
+    public void Remove()
+    {
+        m_Body.DOScale(0, m_TrailDisappearSpeed).SetEase(Ease.InBack);
+        m_Wheels.DOScale(0, m_TrailDisappearSpeed).SetEase(Ease.InBack).OnComplete(() => Destroy(gameObject));
     }
 
     public bool TryAddItem(Case item)
