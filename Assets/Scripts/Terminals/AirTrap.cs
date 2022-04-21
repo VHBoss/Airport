@@ -8,9 +8,19 @@ public class AirTrap : MonoBehaviour
 
     private TrailerController m_TtrailerController;
 
-    void Start()
+    private void Awake()
     {
-        
+        GameConfig.SettingsChanged += OnSettingsChanged;
+    }
+
+    private void OnDestroy()
+    {
+        GameConfig.SettingsChanged -= OnSettingsChanged;
+    }
+
+    private void OnSettingsChanged(GameConfig config)
+    {
+        m_LoadTime = config.TrapUploadTime;
     }
 
     private void OnTriggerEnter(Collider other)

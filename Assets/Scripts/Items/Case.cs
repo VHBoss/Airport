@@ -6,8 +6,25 @@ public class Case : MonoBehaviour
     private Collider m_Collider;
     private Animation m_Animation;
     private Transform m_Slot;
-    private float m_MoveSpeed = 3f;
-    private float m_JumpSpeed = 0.5f;
+    private float m_MoveTime = 3f;
+    private float m_JumpTime = 0.5f;
+
+    private void Awake()
+    {
+        OnSettingsChanged(SettingsReader.I.gameConfig);
+        GameConfig.SettingsChanged += OnSettingsChanged;
+    }
+
+    private void OnDestroy()
+    {
+        GameConfig.SettingsChanged -= OnSettingsChanged;
+    }
+
+    private void OnSettingsChanged(GameConfig config)
+    {
+        m_MoveTime = config.CaseMoveTime;
+        m_JumpTime = config.CaseJumpTime;
+    }
 
     public void Init(Transform slot, Vector3 endPoint)
     {
@@ -17,15 +34,12 @@ public class Case : MonoBehaviour
         m_Collider.enabled = false;
         m_Slot = slot;
 
-        transform.DOMove(endPoint, m_MoveSpeed).SetEase(Ease.Linear).OnComplete(JumpToArea);
+        transform.DOMove(endPoint, m_MoveTime).SetEase(Ease.Linear).OnComplete(JumpToArea);
     }
 
     private void JumpToArea()
     {
-        //m_Collider.enabled = true;
-        //m_Animation.enabled = true;
-
-        transform.DOMove(m_Slot.position, m_JumpSpeed).OnComplete(() =>
+        transform.DOMove(m_Slot.position, m_JumpTime).OnComplete(() =>
         {
             m_Collider.enabled = true;
             m_Animation.Play();

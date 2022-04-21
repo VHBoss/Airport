@@ -4,12 +4,29 @@ using UnityEngine;
 public class TrailerStack : MonoBehaviour
 {
     [SerializeField] private Transform m_ItemRoot;
-    [SerializeField] private float m_Offset = 0.5f;
+    [SerializeField] private float m_Offset = 0.285f;
     [SerializeField] private int m_MaxCount = 8;
 
     public int ItemCount => m_ItemRoot.childCount;
 
     private float m_AnimationTime = 0.3f;
+
+    private void Awake()
+    {
+        OnSettingsChanged(SettingsReader.I.gameConfig);
+        GameConfig.SettingsChanged += OnSettingsChanged;
+    }
+
+    private void OnDestroy()
+    {
+        GameConfig.SettingsChanged -= OnSettingsChanged;
+    }
+
+    private void OnSettingsChanged(GameConfig config)
+    {
+        m_MaxCount = config.MaxSuitcaseInTrail;
+        m_AnimationTime = config.SuitcaseAnimationTime;
+    }
 
     public bool TryAddItem(Case item)
     {

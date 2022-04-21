@@ -19,11 +19,22 @@ public class GameConfig : ScriptableObject
     public float TrailerDistance = 1.6f;
     public int MaxTrailers = 2;
     public int StartTrailers = 2;
+    public int MaxSuitcaseInTrail = 8;
+    public float SuitcaseAnimationTime = 0.3f;
 
     [Header("Body tilt")]
     public float TiltSmoothTime = 0.05f;
     public float TiltMaxAngle = 15f;
     public float TiltAngleMultiplier = 10f;
+
+    [Header("Suitcase terminal")]
+    public float NewCaseEverySec = 1f;
+    public float CaseMoveTime = 2f;
+    public float CaseJumpTime = 0.5f;
+
+    [Header("Airplane trap")]
+    public float TrapUploadTime = 0.5f;
+    //public float TrapMoveTime = 1f;
 
     public void UpdateSettings()
     {
