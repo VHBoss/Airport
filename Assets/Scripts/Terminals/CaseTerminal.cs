@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class CaseTerminal : MonoBehaviour
 {
+    [SerializeField] private Transform m_StartPoint;
     [SerializeField] private Transform m_EndPoint;
     [SerializeField] private Case m_CasePrefab;
     [SerializeField] private PlaceArea m_Area;
@@ -41,7 +42,7 @@ public class CaseTerminal : MonoBehaviour
             return;
         }
 
-        Case suitcase = Instantiate(m_CasePrefab, transform.position, Quaternion.identity);
+        Case suitcase = Instantiate(m_CasePrefab, m_StartPoint.position, Quaternion.identity);
         suitcase.Load(slot, m_EndPoint.position);
 
         slot.gameObject.SetActive(false);

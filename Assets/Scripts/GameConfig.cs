@@ -13,6 +13,7 @@ public class GameConfig : ScriptableObject
 
     [Header("Car settings")]
     public float CarMoveSpeed = 7;
+    public float CarBreakSpeed = 0.96f;
     public float CarRotationTime = 0.15f;
     public float CarRaycastLength = 1f;
 
@@ -21,7 +22,9 @@ public class GameConfig : ScriptableObject
     public int MaxTrailers = 2;
     public int StartTrailers = 2;
     public float TrailAppearSpeed = 0.5f;
+    public AnimationCurve TrailAppearCurve;
     public float TrailDisappearSpeed = 0.3f;
+    public AnimationCurve TrailDisppearCurve;
     public int MaxSuitcaseInTrail = 8;
     public float SuitcaseAnimationTime = 0.3f;
 

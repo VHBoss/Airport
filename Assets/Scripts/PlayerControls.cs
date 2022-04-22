@@ -4,6 +4,7 @@ public class PlayerControls : MonoBehaviour
 {
     public float playerSpeed = 5.0f;
     public float rotationTime = 0.1f;
+    public float breakSpeed = 0.96f;
     public Transform Car;
     public Transform WheelFL;
     public Transform WheelFR;
@@ -33,16 +34,11 @@ public class PlayerControls : MonoBehaviour
     {
         playerSpeed = config.CarMoveSpeed;
         rotationTime = config.CarRotationTime;
+        breakSpeed = config.CarBreakSpeed;
     }
 
     void Update()
     {
-        groundedPlayer = controller.isGrounded;
-        if (groundedPlayer && playerVelocity.y < 0)
-        {
-            playerVelocity.y = 0f;
-        }
-
         move = Vector3.forward * variableJoystick.Vertical + Vector3.right * variableJoystick.Horizontal;
 
 #if UNITY_EDITOR
@@ -54,12 +50,9 @@ public class PlayerControls : MonoBehaviour
         if (move != Vector3.zero)
         {
             Vector3 newDirection = Vector3.SmoothDamp(Car.transform.forward, move, ref rotationVelocity, rotationTime);
-            controller.Move(newDirection * Time.deltaTime * playerSpeed);
+            playerVelocity = newDirection * playerSpeed;
             Car.transform.forward = newDirection;
-        }
 
-        if (move != Vector3.zero)
-        {
             Quaternion rot = Quaternion.LookRotation(move);
             float angle = Quaternion.Angle(rot, Car.transform.rotation);
             if (angle < maxWheelAngle)
@@ -69,7 +62,14 @@ public class PlayerControls : MonoBehaviour
         }
         else
         {
+            playerVelocity *= breakSpeed;
             WheelFL.localRotation = WheelFR.localRotation = Quaternion.identity;
+        }
+
+        groundedPlayer = controller.isGrounded;
+        if (groundedPlayer && playerVelocity.y < 0)
+        {
+            playerVelocity.y = 0f;
         }
 
         playerVelocity.y -= 10 * Time.deltaTime;

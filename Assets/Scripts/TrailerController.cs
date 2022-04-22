@@ -202,11 +202,15 @@ public class TrailerController : MonoBehaviour
         if (m_Trailers.Count > 0)
         {
             TrailerStack trailer = m_Trailers[m_Trailers.Count - 1];
-            trailer.Remove();
-            m_Trailers.RemoveAt(m_Trailers.Count - 1);
-            m_TrailersTransform.RemoveAt(m_TrailersTransform.Count - 1);
-            m_MaxLength = m_TrailerDistance * (m_Trailers.Count + 2);
+            trailer.Remove(OnTrailRemoved);            
         }
+    }
+
+    private void OnTrailRemoved()
+    {
+        m_Trailers.RemoveAt(m_Trailers.Count - 1);
+        m_TrailersTransform.RemoveAt(m_TrailersTransform.Count - 1);
+        m_MaxLength = m_TrailerDistance * (m_Trailers.Count + 2);
     }
 
     public void AddTrailDebug()

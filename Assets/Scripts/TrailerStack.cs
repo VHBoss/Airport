@@ -1,15 +1,18 @@
 using DG.Tweening;
+using System;
 using UnityEngine;
 
 public class TrailerStack : MonoBehaviour
 {
     [SerializeField] private Transform m_ItemRoot;
     [SerializeField] private Transform m_Body;
-    [SerializeField] private Transform m_Wheels;
+    [SerializeField] private Transform m_Wheels;    
     [SerializeField] private float m_Offset = 0.285f;
     [SerializeField] private int m_MaxCount = 8;
     [SerializeField] private float m_TrailAppearSpeed = 0.5f;
+    [SerializeField] private AnimationCurve m_AppearCurve;
     [SerializeField] private float m_TrailDisappearSpeed = 0.3f;
+    [SerializeField] private AnimationCurve m_DisppearCurve;
 
     public int ItemCount => m_ItemRoot.childCount;
 
@@ -38,14 +41,18 @@ public class TrailerStack : MonoBehaviour
     {
         m_Body.localScale = Vector3.zero;
         m_Wheels.localScale = Vector3.zero;
-        m_Body.DOScale(1, m_TrailAppearSpeed).SetEase(Ease.OutBack);
-        m_Wheels.DOScale(1, m_TrailAppearSpeed).SetEase(Ease.OutBack);
+        m_Body.DOScale(1, m_TrailAppearSpeed).SetEase(m_AppearCurve);
+        m_Wheels.DOScale(1, m_TrailAppearSpeed).SetEase(m_AppearCurve);
     }
 
-    public void Remove()
+    public void Remove(Action OnRemoved)
     {
-        m_Body.DOScale(0, m_TrailDisappearSpeed).SetEase(Ease.InBack);
-        m_Wheels.DOScale(0, m_TrailDisappearSpeed).SetEase(Ease.InBack).OnComplete(() => Destroy(gameObject));
+        m_Body.DOScale(0, m_TrailDisappearSpeed).SetEase(m_DisppearCurve);
+        m_Wheels.DOScale(0, m_TrailDisappearSpeed).SetEase(m_DisppearCurve)
+            .OnComplete(() => { 
+                OnRemoved.Invoke();
+                Destroy(gameObject);
+            });
     }
 
     public bool TryAddItem(Case item)
